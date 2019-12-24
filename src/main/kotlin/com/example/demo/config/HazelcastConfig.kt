@@ -1,21 +1,28 @@
 package com.example.demo.config
 
+import com.example.demo.config.properties.HazelcastProperties
 import com.hazelcast.config.*
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
+@EnableConfigurationProperties(HazelcastProperties::class)
 @EnableCaching
-class HazelcastConfig {
+class HazelcastConfig(val hazelcastProperties: HazelcastProperties) {
+
+
     @Bean
     fun hazelCastConfig(): Config {
         val tcpIpConfig = TcpIpConfig()
                 .setEnabled(true)
-                .addMember("127.0.0.1:9701")
-                .addMember("127.0.0.1:9702")
 
-        val networkConfig = NetworkConfig().setPort(9701)
+        for (member in hazelcastProperties.cluster) {
+            tcpIpConfig.addMember(member)
+        }
+
+        val networkConfig = NetworkConfig().setPort(hazelcastProperties.port)
                 .setJoin(JoinConfig()
                         .setMulticastConfig(MulticastConfig().setEnabled(false))
                         .setTcpIpConfig(tcpIpConfig))

@@ -1,0 +1,31 @@
+version: '3'
+services:
+  demo-instance-1:
+    build: .
+    image: hazelcast-demo
+    container_name: demo-instance-1
+    ports:
+      - 8081:8081
+      - 9701:9701
+    environment:
+      - SPRING_PROFILES_ACTIVE=instance1
+
+  demo-instance-2:
+    build: .
+    image: hazelcast-demo
+    container_name: demo-instance-2
+    ports:
+      - 8082:8082
+      - 9702:9702
+    environment:
+      - SPRING_PROFILES_ACTIVE=instance2
+
+  demo-instance-3:
+    build: .
+    image: hazelcast-demo
+    container_name: demo-instance-3
+    ports:
+      - 8083:8083
+      - 9703:9703
+    environment:
+      - SPRING_PROFILES_ACTIVE=instance3

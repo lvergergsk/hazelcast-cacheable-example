@@ -1,10 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.2.2.RELEASE"
+    val kotlinVersion = "1.3.61"
+    val springVersion = "2.2.2.RELEASE"
+
+    id("org.springframework.boot") version springVersion
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    kotlin("jvm") version "1.3.61"
-    kotlin("plugin.spring") version "1.3.61"
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion
 }
 
 group = "com.example"
@@ -22,6 +25,7 @@ repositories {
 }
 
 dependencies {
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -32,9 +36,6 @@ dependencies {
     implementation("com.hazelcast:hazelcast-spring:3.12.5")
     implementation("com.hazelcast:hazelcast:3.12.5")
 
-    compileOnly("org.projectlombok:lombok")
-
-    annotationProcessor("org.projectlombok:lombok")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
@@ -51,4 +52,9 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "1.8"
     }
+}
+
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar>().configureEach {
+    launchScript()
+    archiveFileName.set("demo.jar")
 }

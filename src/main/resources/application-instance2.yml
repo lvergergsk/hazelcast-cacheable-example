@@ -1,0 +1,9 @@
+server:
+  port: 8082
+application:
+  hazelcast:
+    port: 9702
+    cluster:
+      - 127.0.0.1:9701
+      - 127.0.0.1:9702
+      - 127.0.0.1:9703

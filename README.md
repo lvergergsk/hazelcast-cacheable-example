@@ -5,5 +5,8 @@
 - Management center available at `http://localhost:8084/hazelcast-mancenter`
 
 #### Request example
+##### Caching
 - `curl 127.0.0.1:8081/api/v1.0/dummy/time/now`
 - `curl 127.0.0.1:8081/api/v1.0/dummy/time/yesterday`
+##### Executor
+- `curl localhost:8081/api/v1.0/dummy/task/log`

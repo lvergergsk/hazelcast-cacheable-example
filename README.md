@@ -1,6 +1,6 @@
 #### To run
-- make sure `8081`~`8083` & `9701`~`9703` is available.
-- make sure `172.28.1.1`~`172.28.1.3` is available
+- make sure `8081` ~ `8083` & `9701` ~ `9703` is available.
+- make sure `172.28.1.1` ~ `172.28.1.3` is available
 - run `docker-compose up -d --build`
 
 #### Request example

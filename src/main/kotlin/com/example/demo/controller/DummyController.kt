@@ -13,4 +13,10 @@ class DummyController(private val dummyService: DummyService) {
 
     @GetMapping("time/yesterday")
     fun getTimeYesterday(): String = dummyService.getTimeYesterday().toString()
+
+    @GetMapping("task/log")
+    fun runTask(): String {
+        dummyService.longRunningTask()
+        return "OK"
+    }
 }

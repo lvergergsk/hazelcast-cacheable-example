@@ -8,6 +8,8 @@ import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+
+// for 3 cp member, if 2 member die, system will parallelize.
 @Configuration
 @EnableConfigurationProperties(ApplicationProperties::class)
 @EnableCaching
@@ -38,7 +40,9 @@ class HazelcastConfig(val applicationProperties: ApplicationProperties) {
         val executorConfig = ExecutorConfig().setName("exec").setPoolSize(5).setQueueCapacity(100)
 
         // CPMemberCount need to be equal or more than 3
-        val cpSubsystemConfig = CPSubsystemConfig().setCPMemberCount(3)
+        // SessionTimeToLiveSeconds decide how long to wait until new session will be created when cp member left.
+        // If no new session created, spring integration can not elect new member.
+        val cpSubsystemConfig = CPSubsystemConfig().setCPMemberCount(3).setSessionTimeToLiveSeconds(60)
 
         return Config().setInstanceName("hazelcast-instance")
                 .addMapConfig(demoCache)

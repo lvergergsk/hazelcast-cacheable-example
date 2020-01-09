@@ -1,27 +1,28 @@
 package com.example.demo.config
 
-import com.example.demo.config.properties.HazelcastProperties
+import com.example.demo.properties.ApplicationProperties
 import com.hazelcast.config.*
-import org.springframework.boot.autoconfigure.web.ServerProperties
+import com.hazelcast.config.cp.CPSubsystemConfig
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@EnableConfigurationProperties(HazelcastProperties::class)
+@EnableConfigurationProperties(ApplicationProperties::class)
 @EnableCaching
-class HazelcastConfig(val hazelcastProperties: HazelcastProperties, val serverProperties: ServerProperties) {
+class HazelcastConfig(val applicationProperties: ApplicationProperties) {
+
     @Bean
     fun hazelCastConfig(): Config {
         val tcpIpConfig = TcpIpConfig().setEnabled(true)
 
-        for (member in hazelcastProperties.cluster) {
+        for (member in applicationProperties.hazelcast.cluster) {
             tcpIpConfig.addMember(member)
         }
 
         val networkConfig =
-                NetworkConfig().setPort(hazelcastProperties.port)
+                NetworkConfig().setPort(applicationProperties.hazelcast.port)
                         .setJoin(JoinConfig().setMulticastConfig(MulticastConfig().setEnabled(false))
                                 .setTcpIpConfig(tcpIpConfig))
 
@@ -29,13 +30,23 @@ class HazelcastConfig(val hazelcastProperties: HazelcastProperties, val serverPr
                 ManagementCenterConfig().setEnabled(true)
                         .setUrl("http://172.28.1.4:8080/hazelcast-mancenter")
 
+        val demoCache = MapConfig().setName("demo")
+                .setMaxSizeConfig(MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
+                .setEvictionPolicy(EvictionPolicy.LRU)
+                .setTimeToLiveSeconds(20)
+
+        val executorConfig = ExecutorConfig().setName("exec").setPoolSize(5).setQueueCapacity(100)
+
+        // CPMemberCount need to be equal or more than 3
+        val cpSubsystemConfig = CPSubsystemConfig().setCPMemberCount(3)
+
         return Config().setInstanceName("hazelcast-instance")
-                .addMapConfig(MapConfig().setName("demo")
-                        .setMaxSizeConfig(MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
-                        .setEvictionPolicy(EvictionPolicy.LRU)
-                        .setTimeToLiveSeconds(20))
+                .addMapConfig(demoCache)
+                .addExecutorConfig(executorConfig)
                 .setManagementCenterConfig(managementCenterConfig)
                 .setGroupConfig(GroupConfig().setName("hazelcast-group"))
                 .setNetworkConfig(networkConfig)
+                .setCPSubsystemConfig(cpSubsystemConfig)
     }
 }
+

@@ -1,6 +1,8 @@
 server:
   port: 8081
 application:
+  clustering:
+    role: worker
   hazelcast:
     port: 9701
     cluster:

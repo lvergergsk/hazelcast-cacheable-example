@@ -6,7 +6,6 @@ services:
     container_name: demo-instance-1
     ports:
       - 8081:8081
-      - 8443:8443
       - 9701:9701
     environment:
       - SPRING_PROFILES_ACTIVE=instance1
